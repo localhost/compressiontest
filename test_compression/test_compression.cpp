@@ -55,7 +55,7 @@ void * testCompress(const void *mem,int len,COMPRESSION::CompressionType type,in
   unsigned int stime = timeGetTime();
   void *cdata = COMPRESSION::compressData(mem,len,outlen,type);
   unsigned int etime = timeGetTime();
-  printf("FROM:%11s TO:%11s %4d%% %8s MS\r\n", formatNumber(len), formatNumber(outlen), (outlen*100) / len, formatNumber(etime-stime) );
+  printf("FROM:%11s TO:%11s %4d%% %8s MS\r\n", formatNumber(len), formatNumber(outlen), 100-((outlen*100) / len), formatNumber(etime-stime) );
   return cdata;
 }
 
@@ -89,7 +89,7 @@ void main(int argc,const char **argv)
 
   char dirname[512];
   strncpy(dirname,argv[0],512);
-  int len = strlen(dirname);
+  int len = (int)strlen(dirname);
   char *scan = &dirname[len-1];
   while ( len )
   {
