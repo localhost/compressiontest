@@ -146,6 +146,12 @@ void main(int argc,const char **argv)
       int outlen6;
       void * cdata6 = testCompress(temp,len,COMPRESSION::CT_LIBLZF,outlen6);
 
+      int outlen7;
+      void * cdata7 = testCompress(temp,len,COMPRESSION::CT_LZMA,outlen7);
+
+      int outlen8;
+      void * cdata8 = testCompress(temp,len,COMPRESSION::CT_FASTLZ,outlen8);
+
       delete []temp;
 
       printf("\r\n");
@@ -161,6 +167,8 @@ void main(int argc,const char **argv)
       testDecompress(cdata4,outlen4);
       testDecompress(cdata5,outlen5);
       testDecompress(cdata6,outlen6);
+      testDecompress(cdata7,outlen7);
+      testDecompress(cdata8,outlen8);
 
 
     }

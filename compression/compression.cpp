@@ -23,8 +23,15 @@
 
 extern "C"
 {
+
 #include "../liblzf/lzf.h"
+
+#include "../lzma/LzmaEnc.h"
+#include "../lzma/LzmaDec.h"
+
 }
+
+#include "../fastlz/fastlz.h"
 
 namespace COMPRESSION
 {
@@ -66,7 +73,7 @@ static inline unsigned int ComputeCRC(char c,unsigned int &crc)  // add into acc
 }
 
 
-static unsigned int ComputeCRC(const void *buffer,int count,unsigned int crc=0)
+unsigned int ComputeCRC(const void *buffer,int count,unsigned int crc=0)
 {
 
   if ( mFirst )
@@ -280,6 +287,81 @@ void * compressLIBLZF(const void *source,int len,int &outlen)
   return h;
 }
 
+void* Alloc(void *p, size_t size) { return malloc(size); }
+void Free(void *p, void *address) { if (address) free(address); }
+
+ISzAlloc alloc = { Alloc, Free };
+
+void * compressLZMA(const void *source,int len,int &outlen)
+{
+
+  uLong csize = len*2;
+
+  CompressionHeader *h = (CompressionHeader *) malloc(csize+sizeof(CompressionHeader));
+  unsigned char *dest = (unsigned char *)h;
+  dest+=sizeof(CompressionHeader);
+
+
+    CLzmaEncProps props;
+    LzmaEncProps_Init(&props);
+    props.level = 1;
+    props.algo = 0;
+    props.numThreads = 4;
+    SizeT s = LZMA_PROPS_SIZE;
+    SRes err = LzmaEncode((Byte*)dest + LZMA_PROPS_SIZE, (SizeT*)&csize, (Byte*)source, len, &props, (Byte*)dest, &s, 1, NULL, &alloc, &alloc);
+    csize += LZMA_PROPS_SIZE;
+
+  if ( err == SZ_OK )
+  {
+    outlen = csize;
+
+    h->mRawLength        = len;
+    h->mCRC              = ComputeCRC((const unsigned char *)dest,outlen,h->mRawLength);
+    outlen+=sizeof(CompressionHeader);
+    h->mCompressedLength = outlen;
+    h->mId[0]            = 'L';
+    h->mId[1]            = 'Z';
+    h->mId[2]            = 'M';
+    h->mId[3]            = 'A';
+  }
+  else
+  {
+    outlen = 0;
+    free(h);
+    h = 0;
+  }
+  return h;
+}
+
+void * compressFASTLZ(const void *source,int len,int &outlen)
+{
+  unsigned int csize = len * 105 / 100;
+  CompressionHeader *h = (CompressionHeader *) malloc(csize+sizeof(CompressionHeader));
+  unsigned char *dest = (unsigned char *)h;
+  dest+=sizeof(CompressionHeader);
+
+  outlen = fastlz_compress(source, len, dest);
+
+  if (outlen != 0)
+  {
+    h->mRawLength        = len;
+    h->mCRC              = ComputeCRC((const unsigned char *)dest,outlen,h->mRawLength);
+    outlen+=sizeof(CompressionHeader);
+    h->mCompressedLength = outlen;
+    h->mId[0]            = 'F';
+    h->mId[1]            = 'A';
+    h->mId[2]            = 'S';
+    h->mId[3]            = 'T';
+  }
+  else
+  {
+    free(dest);
+	h = 0;
+  }
+
+  return h;
+}
+
 void * compressData(const void *source,int len,int &outlen,CompressionType type)
 {
   void *ret = 0;
@@ -302,6 +384,12 @@ void * compressData(const void *source,int len,int &outlen,CompressionType type)
       break;
     case CT_LIBLZF:
       ret = compressLIBLZF(source,len,outlen);
+      break;
+    case CT_LZMA:
+      ret = compressLZMA(source,len,outlen);
+      break;
+    case CT_FASTLZ:
+      ret = compressFASTLZ(source,len,outlen);
       break;
 
   }
@@ -523,6 +611,93 @@ void * decompressLIBLZF(const void *source,int clen,int &outlen)
   return ret;
 }
 
+void * decompressLZMA(const void *source,int clen,int &outlen)
+{
+  void * ret = 0;
+
+  CompressionHeader *h = (CompressionHeader *) source;
+
+  if ( 1 )
+  {
+
+    const char *data = (const char *) h;
+    data+=sizeof(CompressionHeader);
+    unsigned int slen = clen-sizeof(CompressionHeader);
+    unsigned int crc = ComputeCRC((const unsigned char *)data,slen,h->mRawLength);
+    if ( crc == h->mCRC )
+    {
+
+      outlen = h->mRawLength;
+      char *dest = (char *)malloc(h->mRawLength);
+
+      unsigned int destLen = outlen;
+
+      ELzmaStatus status;
+      slen -= LZMA_PROPS_SIZE;
+      SRes err = LzmaDecode((Byte*)dest, (SizeT*)&destLen, (const Byte*)data + LZMA_PROPS_SIZE, (SizeT*)&slen, (const Byte*)data, LZMA_PROPS_SIZE, LZMA_FINISH_END, &status, &alloc);
+
+      assert( destLen == outlen );
+      
+      if ( err == SZ_OK && destLen == outlen )
+      {
+        ret = dest;
+      }
+      else
+      {
+        free(dest);
+        outlen = 0;
+        ret = 0;
+      }
+    }
+  }
+
+  return ret;
+}
+
+void * decompressFASTLZ(const void *source,int clen,int &outlen)
+{
+  void * ret = 0;
+
+  CompressionHeader *h = (CompressionHeader *) source;
+
+  if ( 1 )
+  {
+
+    const char *data = (const char *) h;
+    data+=sizeof(CompressionHeader);
+    unsigned int slen = clen-sizeof(CompressionHeader);
+    unsigned int crc = ComputeCRC((const unsigned char *)data,slen,h->mRawLength);
+    if ( crc == h->mCRC )
+    {
+
+      outlen = h->mRawLength;
+      char *dest = (char *)malloc(h->mRawLength);
+
+      unsigned int destLen = outlen;
+      outlen = fastlz_decompress(data, slen, dest, h->mRawLength);
+
+      assert( destLen == outlen );
+      
+	  int err = 0;
+	  if ( destLen != outlen )
+        err = -1;
+
+      if ( err == 0 )
+      {
+        ret = dest;
+      }
+      else
+      {
+        free(dest);
+        outlen = 0;
+        ret = 0;
+      }
+    }
+  }
+
+  return ret;
+}
+
 void * decompressData(const void *source,int clen,int &outlen)
 {
   void * ret = 0;
@@ -547,6 +722,12 @@ void * decompressData(const void *source,int clen,int &outlen)
       break;
     case CT_LIBLZF:
       ret = decompressLIBLZF(source,clen,outlen);
+      break;
+    case CT_LZMA:
+      ret = decompressLZMA(source,clen,outlen);
+      break;
+    case CT_FASTLZ:
+      ret = decompressFASTLZ(source,clen,outlen);
       break;
   }
 
@@ -574,6 +755,10 @@ CompressionType getCompressionType(const void *mem,int len)
         ret = CT_BZIP;
       else if ( h->mId[0] == 'L' && h->mId[1] == 'L' && h->mId[2] == 'Z' && h->mId[3] == 'F' )
         ret = CT_LIBLZF;
+      else if ( h->mId[0] == 'L' && h->mId[1] == 'Z' && h->mId[2] == 'M' && h->mId[3] == 'A' )
+        ret = CT_LZMA;
+      else if ( h->mId[0] == 'F' && h->mId[1] == 'A' && h->mId[2] == 'S' && h->mId[3] == 'T' )
+        ret = CT_FASTLZ;
     }
   }
 
@@ -591,6 +776,8 @@ const char      *getCompressionTypeString(CompressionType type)
     case CT_ZLIB: ret = "CT_ZLIB"; break;
     case CT_BZIP: ret = "CT_BZIP"; break;
     case CT_LIBLZF: ret = "CT_LIBLZF"; break;
+    case CT_LZMA: ret = "CT_LZMA"; break;
+    case CT_FASTLZ: ret = "CT_FASTLZ"; break;
   }
   return ret;
 }

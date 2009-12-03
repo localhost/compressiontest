@@ -18,6 +18,8 @@ enum CompressionType
   CT_ZLIB,              // The ZLIB library   http://www.zlib.net/
   CT_BZIP,              // The BZIP library  http://www.bzip.org/
   CT_LIBLZF,            // The LIBLZF library  http://oldhome.schmorp.de/marc/liblzf.html
+  CT_LZMA,              // The LZMA library http://www.7-zip.org/sdk.html
+  CT_FASTLZ,            // The FastLZ library  http://www.fastlz.org/
 };
 
 void *           compressData(const void *source,int len,int &outlen,CompressionType type=CT_ZLIB);

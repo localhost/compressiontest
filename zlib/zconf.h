@@ -331,7 +331,7 @@ typedef uLong FAR uLongf;
 
 #define FASTEST 1
 #define ASMV 1
-
-
+#define NO_GZCOMPRESS 1
+#define NO_GZIP 1
 
 #endif /* ZCONF_H */
