@@ -335,7 +335,7 @@ void * compressLZMA(const void *source,int len,int &outlen)
 
 void * compressFASTLZ(const void *source,int len,int &outlen)
 {
-  unsigned int csize = len * 105 / 100;
+  unsigned int csize = len*2;
   CompressionHeader *h = (CompressionHeader *) malloc(csize+sizeof(CompressionHeader));
   unsigned char *dest = (unsigned char *)h;
   dest+=sizeof(CompressionHeader);
