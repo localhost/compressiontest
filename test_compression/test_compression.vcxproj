@@ -1,0 +1,398 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{190EC72D-0DDE-48E9-A667-13CB5503EB93}</ProjectGuid>
+    <RootNamespace>test_compression</RootNamespace>
+    <Keyword>Win32Proj</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.40219.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(Configuration)\</IntDir>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</LinkIncremental>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(Configuration)\</IntDir>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <AdditionalOptions>/MP
+/wd4530 /wd4244 /wd4996 %(AdditionalOptions)</AdditionalOptions>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <StringPooling>true</StringPooling>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+    </ClCompile>
+    <Link>
+      <OutputFile>$(ProjectName).exe</OutputFile>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Console</SubSystem>
+      <TargetMachine>MachineX86</TargetMachine>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <AdditionalOptions>/MP
+/wd4530 /wd4244 /wd4996 %(AdditionalOptions)</AdditionalOptions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <StringPooling>true</StringPooling>
+      <ExceptionHandling>
+      </ExceptionHandling>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <BufferSecurityCheck>false</BufferSecurityCheck>
+      <AssemblerOutput>All</AssemblerOutput>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <CallingConvention>Cdecl</CallingConvention>
+      <Optimization>Full</Optimization>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+    </ClCompile>
+    <Link>
+      <OutputFile>$(TargetPath)</OutputFile>
+      <SubSystem>Console</SubSystem>
+      <OptimizeReferences>true</OptimizeReferences>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <TargetMachine>MachineX86</TargetMachine>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="test_compression.cpp" />
+    <ClCompile Include="..\liblzf\lzf_c.c" />
+    <ClCompile Include="..\liblzf\lzf_d.c" />
+    <ClCompile Include="..\compression\compression.cpp" />
+    <ClCompile Include="..\cryptopp\3way.cpp" />
+    <ClCompile Include="..\cryptopp\adler32.cpp">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)%(Filename)1.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)%(Filename)1.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)%(Filename)1.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)%(Filename)1.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\cryptopp\algebra.cpp" />
+    <ClCompile Include="..\cryptopp\algparam.cpp" />
+    <ClCompile Include="..\cryptopp\arc4.cpp" />
+    <ClCompile Include="..\cryptopp\asn.cpp" />
+    <ClCompile Include="..\cryptopp\base32.cpp" />
+    <ClCompile Include="..\cryptopp\base64.cpp" />
+    <ClCompile Include="..\cryptopp\basecode.cpp" />
+    <ClCompile Include="..\cryptopp\bench.cpp" />
+    <ClCompile Include="..\cryptopp\bench2.cpp" />
+    <ClCompile Include="..\cryptopp\bfinit.cpp" />
+    <ClCompile Include="..\cryptopp\blowfish.cpp" />
+    <ClCompile Include="..\cryptopp\blumshub.cpp" />
+    <ClCompile Include="..\cryptopp\camellia.cpp" />
+    <ClCompile Include="..\cryptopp\cast.cpp" />
+    <ClCompile Include="..\cryptopp\casts.cpp" />
+    <ClCompile Include="..\cryptopp\cbcmac.cpp" />
+    <ClCompile Include="..\cryptopp\channels.cpp" />
+    <ClCompile Include="..\cryptopp\crc.cpp" />
+    <ClCompile Include="..\cryptopp\cryptlib.cpp" />
+    <ClCompile Include="..\cryptopp\default.cpp" />
+    <ClCompile Include="..\cryptopp\des.cpp" />
+    <ClCompile Include="..\cryptopp\dessp.cpp" />
+    <ClCompile Include="..\cryptopp\dh.cpp" />
+    <ClCompile Include="..\cryptopp\dh2.cpp" />
+    <ClCompile Include="..\cryptopp\dll.cpp" />
+    <ClCompile Include="..\cryptopp\dsa.cpp" />
+    <ClCompile Include="..\cryptopp\ec2n.cpp" />
+    <ClCompile Include="..\cryptopp\eccrypto.cpp" />
+    <ClCompile Include="..\cryptopp\ecp.cpp" />
+    <ClCompile Include="..\cryptopp\elgamal.cpp" />
+    <ClCompile Include="..\cryptopp\emsa2.cpp" />
+    <ClCompile Include="..\cryptopp\eprecomp.cpp" />
+    <ClCompile Include="..\cryptopp\esign.cpp" />
+    <ClCompile Include="..\cryptopp\files.cpp" />
+    <ClCompile Include="..\cryptopp\filters.cpp" />
+    <ClCompile Include="..\cryptopp\fips140.cpp" />
+    <ClCompile Include="..\cryptopp\fipsalgt.cpp" />
+    <ClCompile Include="..\cryptopp\fipstest.cpp" />
+    <ClCompile Include="..\cryptopp\gf256.cpp" />
+    <ClCompile Include="..\cryptopp\gf2_32.cpp" />
+    <ClCompile Include="..\cryptopp\gf2n.cpp" />
+    <ClCompile Include="..\cryptopp\gfpcrypt.cpp" />
+    <ClCompile Include="..\cryptopp\gost.cpp" />
+    <ClCompile Include="..\cryptopp\gzip.cpp" />
+    <ClCompile Include="..\cryptopp\haval.cpp" />
+    <ClCompile Include="..\cryptopp\hex.cpp" />
+    <ClCompile Include="..\cryptopp\hmac.cpp" />
+    <ClCompile Include="..\cryptopp\hrtimer.cpp" />
+    <ClCompile Include="..\cryptopp\ida.cpp" />
+    <ClCompile Include="..\cryptopp\idea.cpp" />
+    <ClCompile Include="..\cryptopp\integer.cpp" />
+    <ClCompile Include="..\cryptopp\iterhash.cpp" />
+    <ClCompile Include="..\cryptopp\luc.cpp" />
+    <ClCompile Include="..\cryptopp\mars.cpp" />
+    <ClCompile Include="..\cryptopp\marss.cpp" />
+    <ClCompile Include="..\cryptopp\md2.cpp" />
+    <ClCompile Include="..\cryptopp\md4.cpp" />
+    <ClCompile Include="..\cryptopp\md5.cpp" />
+    <ClCompile Include="..\cryptopp\md5mac.cpp" />
+    <ClCompile Include="..\cryptopp\misc.cpp" />
+    <ClCompile Include="..\cryptopp\modes.cpp" />
+    <ClCompile Include="..\cryptopp\modexppc.cpp" />
+    <ClCompile Include="..\cryptopp\mqueue.cpp" />
+    <ClCompile Include="..\cryptopp\mqv.cpp" />
+    <ClCompile Include="..\cryptopp\nbtheory.cpp" />
+    <ClCompile Include="..\cryptopp\network.cpp" />
+    <ClCompile Include="..\cryptopp\oaep.cpp" />
+    <ClCompile Include="..\cryptopp\osrng.cpp" />
+    <ClCompile Include="..\cryptopp\panama.cpp" />
+    <ClCompile Include="..\cryptopp\pch.cpp" />
+    <ClCompile Include="..\cryptopp\pkcspad.cpp" />
+    <ClCompile Include="..\cryptopp\polynomi.cpp" />
+    <ClCompile Include="..\cryptopp\pssr.cpp" />
+    <ClCompile Include="..\cryptopp\pubkey.cpp" />
+    <ClCompile Include="..\cryptopp\queue.cpp" />
+    <ClCompile Include="..\cryptopp\rabin.cpp" />
+    <ClCompile Include="..\cryptopp\randpool.cpp" />
+    <ClCompile Include="..\cryptopp\rc2.cpp" />
+    <ClCompile Include="..\cryptopp\rc5.cpp" />
+    <ClCompile Include="..\cryptopp\rc6.cpp" />
+    <ClCompile Include="..\cryptopp\rdtables.cpp" />
+    <ClCompile Include="..\cryptopp\regtest.cpp" />
+    <ClCompile Include="..\cryptopp\rijndael.cpp" />
+    <ClCompile Include="..\cryptopp\ripemd.cpp" />
+    <ClCompile Include="..\cryptopp\rng.cpp" />
+    <ClCompile Include="..\cryptopp\rsa.cpp" />
+    <ClCompile Include="..\cryptopp\rw.cpp" />
+    <ClCompile Include="..\cryptopp\safer.cpp" />
+    <ClCompile Include="..\cryptopp\seal.cpp" />
+    <ClCompile Include="..\cryptopp\serpent.cpp" />
+    <ClCompile Include="..\cryptopp\sha.cpp" />
+    <ClCompile Include="..\cryptopp\shacal2.cpp" />
+    <ClCompile Include="..\cryptopp\shark.cpp" />
+    <ClCompile Include="..\cryptopp\sharkbox.cpp" />
+    <ClCompile Include="..\cryptopp\simple.cpp" />
+    <ClCompile Include="..\cryptopp\skipjack.cpp" />
+    <ClCompile Include="..\cryptopp\socketft.cpp" />
+    <ClCompile Include="..\cryptopp\square.cpp" />
+    <ClCompile Include="..\cryptopp\squaretb.cpp" />
+    <ClCompile Include="..\cryptopp\strciphr.cpp" />
+    <ClCompile Include="..\cryptopp\tea.cpp" />
+    <ClCompile Include="..\cryptopp\tftables.cpp" />
+    <ClCompile Include="..\cryptopp\tiger.cpp" />
+    <ClCompile Include="..\cryptopp\tigertab.cpp" />
+    <ClCompile Include="..\cryptopp\trdlocal.cpp" />
+    <ClCompile Include="..\cryptopp\ttmac.cpp" />
+    <ClCompile Include="..\cryptopp\twofish.cpp" />
+    <ClCompile Include="..\cryptopp\wait.cpp" />
+    <ClCompile Include="..\cryptopp\wake.cpp" />
+    <ClCompile Include="..\cryptopp\whrlpool.cpp" />
+    <ClCompile Include="..\cryptopp\winpipes.cpp" />
+    <ClCompile Include="..\cryptopp\xtr.cpp" />
+    <ClCompile Include="..\cryptopp\xtrcrypt.cpp" />
+    <ClCompile Include="..\cryptopp\zdeflate.cpp" />
+    <ClCompile Include="..\cryptopp\zinflate.cpp" />
+    <ClCompile Include="..\cryptopp\zlib.cpp" />
+    <ClCompile Include="..\minilzo\minilzo.cpp" />
+    <ClCompile Include="..\bzip\bzblocksort.c" />
+    <ClCompile Include="..\bzip\bzcompress.c" />
+    <ClCompile Include="..\bzip\bzcrctable.c" />
+    <ClCompile Include="..\bzip\bzdecompress.c" />
+    <ClCompile Include="..\bzip\bzhuffman.c" />
+    <ClCompile Include="..\bzip\bzlib.c" />
+    <ClCompile Include="..\bzip\bzrandtable.c" />
+    <ClCompile Include="..\zlib\adler32.c" />
+    <ClCompile Include="..\zlib\compress.c" />
+    <ClCompile Include="..\zlib\crc32.c" />
+    <ClCompile Include="..\zlib\deflate.c" />
+    <ClCompile Include="..\zlib\gzio.c" />
+    <ClCompile Include="..\zlib\infback.c" />
+    <ClCompile Include="..\zlib\inffast.c" />
+    <ClCompile Include="..\zlib\inflate.c" />
+    <ClCompile Include="..\zlib\inftrees.c" />
+    <ClCompile Include="..\zlib\trees.c" />
+    <ClCompile Include="..\zlib\uncompr.c" />
+    <ClCompile Include="..\zlib\zutil.c" />
+    <ClCompile Include="..\fastlz\fastlz.c" />
+    <ClCompile Include="..\lzma\LzFind.c" />
+    <ClCompile Include="..\lzma\LzmaDec.c" />
+    <ClCompile Include="..\lzma\LzmaEnc.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\liblzf\lzf.h" />
+    <ClInclude Include="..\liblzf\lzfP.h" />
+    <ClInclude Include="..\compression\compression.h" />
+    <ClInclude Include="..\cryptopp\3way.h" />
+    <ClInclude Include="..\cryptopp\adler32.h" />
+    <ClInclude Include="..\cryptopp\aes.h" />
+    <ClInclude Include="..\cryptopp\algebra.h" />
+    <ClInclude Include="..\cryptopp\algparam.h" />
+    <ClInclude Include="..\cryptopp\arc4.h" />
+    <ClInclude Include="..\cryptopp\argnames.h" />
+    <ClInclude Include="..\cryptopp\asn.h" />
+    <ClInclude Include="..\cryptopp\base32.h" />
+    <ClInclude Include="..\cryptopp\base64.h" />
+    <ClInclude Include="..\cryptopp\basecode.h" />
+    <ClInclude Include="..\cryptopp\bench.h" />
+    <ClInclude Include="..\cryptopp\blowfish.h" />
+    <ClInclude Include="..\cryptopp\blumshub.h" />
+    <ClInclude Include="..\cryptopp\camellia.h" />
+    <ClInclude Include="..\cryptopp\cast.h" />
+    <ClInclude Include="..\cryptopp\cbcmac.h" />
+    <ClInclude Include="..\cryptopp\channels.h" />
+    <ClInclude Include="..\cryptopp\config.h" />
+    <ClInclude Include="..\cryptopp\crc.h" />
+    <ClInclude Include="..\cryptopp\cryptlib.h" />
+    <ClInclude Include="..\cryptopp\default.h" />
+    <ClInclude Include="..\cryptopp\des.h" />
+    <ClInclude Include="..\cryptopp\dh.h" />
+    <ClInclude Include="..\cryptopp\dh2.h" />
+    <ClInclude Include="..\cryptopp\dll.h" />
+    <ClInclude Include="..\cryptopp\dmac.h" />
+    <ClInclude Include="..\cryptopp\dsa.h" />
+    <ClInclude Include="..\cryptopp\ec2n.h" />
+    <ClInclude Include="..\cryptopp\eccrypto.h" />
+    <ClInclude Include="..\cryptopp\ecp.h" />
+    <ClInclude Include="..\cryptopp\elgamal.h" />
+    <ClInclude Include="..\cryptopp\emsa2.h" />
+    <ClInclude Include="..\cryptopp\eprecomp.h" />
+    <ClInclude Include="..\cryptopp\esign.h" />
+    <ClInclude Include="..\cryptopp\factory.h" />
+    <ClInclude Include="..\cryptopp\files.h" />
+    <ClInclude Include="..\cryptopp\filters.h" />
+    <ClInclude Include="..\cryptopp\fips140.h" />
+    <ClInclude Include="..\cryptopp\fltrimpl.h" />
+    <ClInclude Include="..\cryptopp\gf256.h" />
+    <ClInclude Include="..\cryptopp\gf2_32.h" />
+    <ClInclude Include="..\cryptopp\gf2n.h" />
+    <ClInclude Include="..\cryptopp\gfpcrypt.h" />
+    <ClInclude Include="..\cryptopp\gost.h" />
+    <ClInclude Include="..\cryptopp\gzip.h" />
+    <ClInclude Include="..\cryptopp\haval.h" />
+    <ClInclude Include="..\cryptopp\hex.h" />
+    <ClInclude Include="..\cryptopp\hmac.h" />
+    <ClInclude Include="..\cryptopp\hrtimer.h" />
+    <ClInclude Include="..\cryptopp\ida.h" />
+    <ClInclude Include="..\cryptopp\idea.h" />
+    <ClInclude Include="..\cryptopp\integer.h" />
+    <ClInclude Include="..\cryptopp\iterhash.h" />
+    <ClInclude Include="..\cryptopp\lubyrack.h" />
+    <ClInclude Include="..\cryptopp\luc.h" />
+    <ClInclude Include="..\cryptopp\mars.h" />
+    <ClInclude Include="..\cryptopp\md2.h" />
+    <ClInclude Include="..\cryptopp\md4.h" />
+    <ClInclude Include="..\cryptopp\md5.h" />
+    <ClInclude Include="..\cryptopp\md5mac.h" />
+    <ClInclude Include="..\cryptopp\mdc.h" />
+    <ClInclude Include="..\cryptopp\misc.h" />
+    <ClInclude Include="..\cryptopp\modarith.h" />
+    <ClInclude Include="..\cryptopp\modes.h" />
+    <ClInclude Include="..\cryptopp\modexppc.h" />
+    <ClInclude Include="..\cryptopp\mqueue.h" />
+    <ClInclude Include="..\cryptopp\mqv.h" />
+    <ClInclude Include="..\cryptopp\nbtheory.h" />
+    <ClInclude Include="..\cryptopp\network.h" />
+    <ClInclude Include="..\cryptopp\nr.h" />
+    <ClInclude Include="..\cryptopp\oaep.h" />
+    <ClInclude Include="..\cryptopp\oids.h" />
+    <ClInclude Include="..\cryptopp\osrng.h" />
+    <ClInclude Include="..\cryptopp\panama.h" />
+    <ClInclude Include="..\cryptopp\pch.h" />
+    <ClInclude Include="..\cryptopp\pkcspad.h" />
+    <ClInclude Include="..\cryptopp\polynomi.h" />
+    <ClInclude Include="..\cryptopp\pssr.h" />
+    <ClInclude Include="..\cryptopp\pubkey.h" />
+    <ClInclude Include="..\cryptopp\pwdbased.h" />
+    <ClInclude Include="..\cryptopp\queue.h" />
+    <ClInclude Include="..\cryptopp\rabin.h" />
+    <ClInclude Include="..\cryptopp\randpool.h" />
+    <ClInclude Include="..\cryptopp\rc2.h" />
+    <ClInclude Include="..\cryptopp\rc5.h" />
+    <ClInclude Include="..\cryptopp\rc6.h" />
+    <ClInclude Include="..\cryptopp\resource.h" />
+    <ClInclude Include="..\cryptopp\rijndael.h" />
+    <ClInclude Include="..\cryptopp\ripemd.h" />
+    <ClInclude Include="..\cryptopp\rng.h" />
+    <ClInclude Include="..\cryptopp\rsa.h" />
+    <ClInclude Include="..\cryptopp\rw.h" />
+    <ClInclude Include="..\cryptopp\safer.h" />
+    <ClInclude Include="..\cryptopp\seal.h" />
+    <ClInclude Include="..\cryptopp\secblock.h" />
+    <ClInclude Include="..\cryptopp\seckey.h" />
+    <ClInclude Include="..\cryptopp\serpent.h" />
+    <ClInclude Include="..\cryptopp\sha.h" />
+    <ClInclude Include="..\cryptopp\shacal2.h" />
+    <ClInclude Include="..\cryptopp\shark.h" />
+    <ClInclude Include="..\cryptopp\simple.h" />
+    <ClInclude Include="..\cryptopp\skipjack.h" />
+    <ClInclude Include="..\cryptopp\smartptr.h" />
+    <ClInclude Include="..\cryptopp\socketft.h" />
+    <ClInclude Include="..\cryptopp\square.h" />
+    <ClInclude Include="..\cryptopp\stdcpp.h" />
+    <ClInclude Include="..\cryptopp\strciphr.h" />
+    <ClInclude Include="..\cryptopp\tea.h" />
+    <ClInclude Include="..\cryptopp\tiger.h" />
+    <ClInclude Include="..\cryptopp\trdlocal.h" />
+    <ClInclude Include="..\cryptopp\trunhash.h" />
+    <ClInclude Include="..\cryptopp\ttmac.h" />
+    <ClInclude Include="..\cryptopp\twofish.h" />
+    <ClInclude Include="..\cryptopp\validate.h" />
+    <ClInclude Include="..\cryptopp\wait.h" />
+    <ClInclude Include="..\cryptopp\wake.h" />
+    <ClInclude Include="..\cryptopp\whrlpool.h" />
+    <ClInclude Include="..\cryptopp\winpipes.h" />
+    <ClInclude Include="..\cryptopp\words.h" />
+    <ClInclude Include="..\cryptopp\xormac.h" />
+    <ClInclude Include="..\cryptopp\xtr.h" />
+    <ClInclude Include="..\cryptopp\xtrcrypt.h" />
+    <ClInclude Include="..\cryptopp\zdeflate.h" />
+    <ClInclude Include="..\cryptopp\zinflate.h" />
+    <ClInclude Include="..\cryptopp\zlib.h" />
+    <ClInclude Include="..\minilzo\lzoconf.h" />
+    <ClInclude Include="..\minilzo\minilzo.h" />
+    <ClInclude Include="..\bzip\bzlib.h" />
+    <ClInclude Include="..\bzip\bzlib_private.h" />
+    <ClInclude Include="..\zlib\crc32.h" />
+    <ClInclude Include="..\zlib\deflate.h" />
+    <ClInclude Include="..\zlib\inffast.h" />
+    <ClInclude Include="..\zlib\inffixed.h" />
+    <ClInclude Include="..\zlib\inflate.h" />
+    <ClInclude Include="..\zlib\inftrees.h" />
+    <ClInclude Include="..\zlib\trees.h" />
+    <ClInclude Include="..\zlib\zconf.h" />
+    <ClInclude Include="..\zlib\zlib.h" />
+    <ClInclude Include="..\zlib\zutil.h" />
+    <ClInclude Include="..\fastlz\fastlz.h" />
+    <ClInclude Include="..\lzma\LzFind.h" />
+    <ClInclude Include="..\lzma\LzHash.h" />
+    <ClInclude Include="..\lzma\LzmaDec.h" />
+    <ClInclude Include="..\lzma\LzmaEnc.h" />
+    <ClInclude Include="..\lzma\Types.h" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
