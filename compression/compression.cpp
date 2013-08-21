@@ -5,7 +5,6 @@
 
 #include "compression.h"
 
-
 #if USE_MINI_LZO
 #include "../minilzo/minilzo.h"
 #endif
@@ -36,7 +35,6 @@ extern "C"
 namespace COMPRESSION
 {
 
-
 typedef unsigned long CRC32; // crc datatype.
 const CRC32 CRC32_POLYNOMIAL=0xEDB88320L;
 
@@ -63,7 +61,6 @@ static void BuildCRCTable(void)
   }
 }
 
-
 static inline unsigned int ComputeCRC(char c,unsigned int &crc)  // add into accumulated crc.
 {
   unsigned int temp1 = ( crc >> 8 ) & 0x00FFFFFFL;
@@ -71,7 +68,6 @@ static inline unsigned int ComputeCRC(char c,unsigned int &crc)  // add into acc
   crc = temp1 ^ temp2;
   return crc;
 }
-
 
 unsigned int ComputeCRC(const void *buffer,int count,unsigned int crc=0)
 {
@@ -91,8 +87,6 @@ unsigned int ComputeCRC(const void *buffer,int count,unsigned int crc=0)
   return( crc&0x7FFFFFFF );
 }
 
-
-
 void deleteData(void* mem)
 {
   free(mem);
@@ -106,7 +100,6 @@ struct CompressionHeader
   char            mId[4];
 };
 
-
 void * compressMiniLZO(const void *source,int len,int &outlen)
 {
 #if USE_MINI_LZO
@@ -117,7 +110,7 @@ void * compressMiniLZO(const void *source,int len,int &outlen)
   unsigned char *dest = (unsigned char *)h;
   dest+=sizeof(CompressionHeader);
   lzo_init();
-  int r = lzo1x_1_compress((const unsigned char *)source,len,dest,(unsigned int *)&outlen,wrkmem);
+  int r = lzo1x_1_compress((const unsigned char *)source,len,dest,(lzo_uint *)&outlen,wrkmem);
 
   if ( r == LZO_E_OK )
   {
@@ -137,7 +130,6 @@ void * compressMiniLZO(const void *source,int len,int &outlen)
     h = 0;
   }
 
-
   return h;
 #else
 
@@ -147,7 +139,6 @@ void * compressMiniLZO(const void *source,int len,int &outlen)
 #endif
 
 }
-
 
 void * compressCRYPTO_GZIP(const void *source,int len,int &outlen)
 {
@@ -185,7 +176,6 @@ void * compressCRYPTO_GZIP(const void *source,int len,int &outlen)
   return ret;
 }
 
-
 #if USE_ZLIB
 void * compressZLIB(const void *source,int len,int &outlen)
 {
@@ -195,7 +185,6 @@ void * compressZLIB(const void *source,int len,int &outlen)
   CompressionHeader *h = (CompressionHeader *) malloc(csize+sizeof(CompressionHeader));
   unsigned char *dest = (unsigned char *)h;
   dest+=sizeof(CompressionHeader);
-
 
   int err = compress2((Bytef *)dest,&csize,(Bytef *)source,len, Z_BEST_SPEED);
 
@@ -231,7 +220,6 @@ void * compressBZIP(const void *source,int len,int &outlen)
   CompressionHeader *h = (CompressionHeader *) malloc(csize+sizeof(CompressionHeader));
   unsigned char *dest = (unsigned char *)h;
   dest+=sizeof(CompressionHeader);
-
 
   int err = BZ2_bzBuffToBuffCompress((char *)dest,&csize,(char *)source,(unsigned int)len,1,0,30);
 
@@ -300,7 +288,6 @@ void * compressLZMA(const void *source,int len,int &outlen)
   CompressionHeader *h = (CompressionHeader *) malloc(csize+sizeof(CompressionHeader));
   unsigned char *dest = (unsigned char *)h;
   dest+=sizeof(CompressionHeader);
-
 
     CLzmaEncProps props;
     LzmaEncProps_Init(&props);
@@ -396,8 +383,6 @@ void * compressData(const void *source,int len,int &outlen,CompressionType type)
   return ret;
 }
 
-
-
 void * decompressMiniLZO(const void *source,int clen,int &outlen)
 {
 #if USE_MINI_LZO
@@ -421,7 +406,7 @@ void * decompressMiniLZO(const void *source,int clen,int &outlen)
       int r = lzo1x_decompress((const unsigned char *)data,
                                slen,
                                (unsigned char *)dest,
-                               (unsigned int *)&outlen,0);
+                               (lzo_uint *)&outlen,0);
 
       if ( r == LZO_E_OK )
       {
@@ -590,7 +575,7 @@ void * decompressLIBLZF(const void *source,int clen,int &outlen)
       outlen = lzf_decompress(data, slen, dest, h->mRawLength);
 
       assert( destLen == outlen );
-      
+
 	  int err = 0;
 	  if ( destLen != outlen )
         err = -1;
@@ -637,7 +622,7 @@ void * decompressLZMA(const void *source,int clen,int &outlen)
       SRes err = LzmaDecode((Byte*)dest, (SizeT*)&destLen, (const Byte*)data + LZMA_PROPS_SIZE, (SizeT*)&slen, (const Byte*)data, LZMA_PROPS_SIZE, LZMA_FINISH_END, &status, &alloc);
 
       assert( destLen == outlen );
-      
+
       if ( err == SZ_OK && destLen == outlen )
       {
         ret = dest;
@@ -677,7 +662,7 @@ void * decompressFASTLZ(const void *source,int clen,int &outlen)
       outlen = fastlz_decompress(data, slen, dest, h->mRawLength);
 
       assert( destLen == outlen );
-      
+
 	  int err = 0;
 	  if ( destLen != outlen )
         err = -1;
@@ -733,8 +718,6 @@ void * decompressData(const void *source,int clen,int &outlen)
 
   return ret;
 }
-
-
 
 CompressionType getCompressionType(const void *mem,int len)
 {
