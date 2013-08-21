@@ -918,5 +918,8 @@
     <ClInclude Include="..\lzma\Types.h">
       <Filter>lzma</Filter>
     </ClInclude>
+    <ClInclude Include="..\minilzo\lzodefs.h">
+      <Filter>minilzo</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

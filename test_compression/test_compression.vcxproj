@@ -43,6 +43,8 @@
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)$(Configuration)\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(Configuration)\</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkIncremental>
+    <CustomBuildAfterTargets Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    </CustomBuildAfterTargets>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -87,6 +89,10 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <TargetMachine>MachineX86</TargetMachine>
     </Link>
+    <CustomBuildStep>
+      <Command>copy /b /y $(TargetPath) $(SolutionDir)$(TargetFileName)</Command>
+      <Outputs>$(SolutionDir)$(TargetFileName)</Outputs>
+    </CustomBuildStep>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="test_compression.cpp" />
@@ -372,6 +378,7 @@
     <ClInclude Include="..\cryptopp\zinflate.h" />
     <ClInclude Include="..\cryptopp\zlib.h" />
     <ClInclude Include="..\minilzo\lzoconf.h" />
+    <ClInclude Include="..\minilzo\lzodefs.h" />
     <ClInclude Include="..\minilzo\minilzo.h" />
     <ClInclude Include="..\bzip\bzlib.h" />
     <ClInclude Include="..\bzip\bzlib_private.h" />
