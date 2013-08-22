@@ -32,6 +32,8 @@ extern "C"
 
 #include "../fastlz/fastlz.h"
 
+#include "../miniz/miniz.h"
+
 namespace COMPRESSION
 {
 
@@ -140,12 +142,12 @@ void * compressMiniLZO(const void *source,int len,int &outlen)
 
 }
 
+#if USE_CRYPTO
 void * compressCRYPTO_GZIP(const void *source,int len,int &outlen)
 {
   void * ret = 0;
 
-   outlen = 0;
-#if USE_CRYPTO
+  outlen = 0;
   std::string outStringOfBytes;
   CryptoPP::Gzip zipper( new CryptoPP::StringSink(outStringOfBytes)); // I have been told that this is not a memory leak, that zipper takes ownership of this memory.  Which is bullshit, but what are you gonna do?
   zipper.Put( (const byte *)source,len);
@@ -171,10 +173,10 @@ void * compressCRYPTO_GZIP(const void *source,int len,int &outlen)
   h++;
   dest = (char *) h;
   memcpy(dest,data,slen);
-#endif
 
   return ret;
 }
+#endif
 
 #if USE_ZLIB
 void * compressZLIB(const void *source,int len,int &outlen)
@@ -268,7 +270,7 @@ void * compressLIBLZF(const void *source,int len,int &outlen)
   }
   else
   {
-    free(dest);
+    free(h);
 	h = 0;
   }
 
@@ -342,11 +344,42 @@ void * compressFASTLZ(const void *source,int len,int &outlen)
   }
   else
   {
-    free(dest);
+    free(h);
 	h = 0;
   }
 
   return h;
+}
+
+void * compressMINIZ(const void *source,int len,int &outlen)
+{
+    unsigned int csize = compressBound(len);
+    CompressionHeader *h = (CompressionHeader *) malloc(csize+sizeof(CompressionHeader));
+    unsigned char *dest = (unsigned char *)h;
+    dest+=sizeof(CompressionHeader);
+
+    uLong out_len = csize;
+    int result = compress(dest, &out_len, (const unsigned char *)source, len);
+    outlen = out_len;
+
+    if (outlen != 0 && result == 0)
+    {
+        h->mRawLength        = len;
+        h->mCRC              = ComputeCRC((const unsigned char *)dest,outlen,h->mRawLength);
+        outlen+=sizeof(CompressionHeader);
+        h->mCompressedLength = outlen;
+        h->mId[0]            = 'M';
+        h->mId[1]            = 'I';
+        h->mId[2]            = 'N';
+        h->mId[3]            = 'I';
+    }
+    else
+    {
+        free(h);
+        h = 0;
+    }
+
+    return h;
 }
 
 void * compressData(const void *source,int len,int &outlen,CompressionType type)
@@ -355,9 +388,11 @@ void * compressData(const void *source,int len,int &outlen,CompressionType type)
 
   switch ( type )
   {
+#if USE_CRYPTO
     case CT_CRYPTO_GZIP:
       ret = compressCRYPTO_GZIP(source,len,outlen);
       break;
+#endif
     case CT_MINILZO:
       ret = compressMiniLZO(source,len,outlen);
       break;
@@ -377,6 +412,9 @@ void * compressData(const void *source,int len,int &outlen,CompressionType type)
       break;
     case CT_FASTLZ:
       ret = compressFASTLZ(source,len,outlen);
+      break;
+    case CT_MINIZ:
+      ret = compressMINIZ(source,len,outlen);
       break;
 
   }
@@ -429,13 +467,13 @@ void * decompressMiniLZO(const void *source,int clen,int &outlen)
 #endif
 }
 
+#if USE_CRYPTO
 void * decompressCRYPTO_GZIP(const void *source,int clen,int &outlen)
 {
   void * ret = 0;
 
   outlen = 0;
 
-#if USE_CRYPTO
   CompressionHeader *h = (CompressionHeader *) source;
   if ( 1 )
   {
@@ -455,10 +493,10 @@ void * decompressCRYPTO_GZIP(const void *source,int clen,int &outlen)
       outlen = h->mRawLength;
     }
   }
-#endif
 
   return ret;
 }
+#endif
 
 #if USE_ZLIB
 void * decompressZLIB(const void *source,int clen,int &outlen)
@@ -683,6 +721,50 @@ void * decompressFASTLZ(const void *source,int clen,int &outlen)
   return ret;
 }
 
+void * decompressMINIZ(const void *source,int clen,int &outlen)
+{
+    void * ret = 0;
+
+    CompressionHeader *h = (CompressionHeader *) source;
+
+    if ( 1 )
+    {
+
+        const char *data = (const char *) h;
+        data+=sizeof(CompressionHeader);
+        unsigned int slen = clen-sizeof(CompressionHeader);
+        unsigned int crc = ComputeCRC((const unsigned char *)data,slen,h->mRawLength);
+        if ( crc == h->mCRC )
+        {
+
+            outlen = h->mRawLength;
+            char *dest = (char *)malloc(h->mRawLength);
+
+            uLongf destLen = outlen;
+            int result = uncompress((Bytef *)dest, &destLen, (const Bytef *)data, slen);
+
+            assert( destLen == outlen );
+
+            int err = 0;
+            if ( destLen != outlen )
+                err = -1;
+
+            if ( err == 0 )
+            {
+                ret = dest;
+            }
+            else
+            {
+                free(dest);
+                outlen = 0;
+                ret = 0;
+            }
+        }
+    }
+
+    return ret;
+}
+
 void * decompressData(const void *source,int clen,int &outlen)
 {
   void * ret = 0;
@@ -691,9 +773,11 @@ void * decompressData(const void *source,int clen,int &outlen)
 
   switch ( getCompressionType(source,clen) )
   {
+#if USE_CRYPTO
     case CT_CRYPTO_GZIP:
       ret = decompressCRYPTO_GZIP(source,clen,outlen);
       break;
+#endif
     case CT_MINILZO:
       ret = decompressMiniLZO(source,clen,outlen);
       break;
@@ -713,6 +797,9 @@ void * decompressData(const void *source,int clen,int &outlen)
       break;
     case CT_FASTLZ:
       ret = decompressFASTLZ(source,clen,outlen);
+      break;
+    case CT_MINIZ:
+      ret = decompressMINIZ(source,clen,outlen);
       break;
   }
 
@@ -742,6 +829,8 @@ CompressionType getCompressionType(const void *mem,int len)
         ret = CT_LZMA;
       else if ( h->mId[0] == 'F' && h->mId[1] == 'A' && h->mId[2] == 'S' && h->mId[3] == 'T' )
         ret = CT_FASTLZ;
+      else if ( h->mId[0] == 'M' && h->mId[1] == 'I' && h->mId[2] == 'N' && h->mId[3] == 'I' )
+        ret = CT_MINIZ;
     }
   }
 
@@ -761,6 +850,7 @@ const char      *getCompressionTypeString(CompressionType type)
     case CT_LIBLZF: ret = "CT_LIBLZF"; break;
     case CT_LZMA: ret = "CT_LZMA"; break;
     case CT_FASTLZ: ret = "CT_FASTLZ"; break;
+    case CT_MINIZ: ret = "CT_MINIZ"; break;
   }
   return ret;
 }

@@ -29,6 +29,9 @@
     <Filter Include="lzma">
       <UniqueIdentifier>{efced3b4-284f-482a-9847-d129efb74849}</UniqueIdentifier>
     </Filter>
+    <Filter Include="miniz">
+      <UniqueIdentifier>{71afc2a1-826a-4651-bdc4-f74a1f4f78c9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="test_compression.cpp">
@@ -468,6 +471,9 @@
     </ClCompile>
     <ClCompile Include="..\lzma\LzmaEnc.c">
       <Filter>lzma</Filter>
+    </ClCompile>
+    <ClCompile Include="..\miniz\miniz.c">
+      <Filter>miniz</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -920,6 +926,9 @@
     </ClInclude>
     <ClInclude Include="..\minilzo\lzodefs.h">
       <Filter>minilzo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\miniz\miniz.h">
+      <Filter>miniz</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

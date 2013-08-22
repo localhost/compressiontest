@@ -14,7 +14,6 @@
 
 #include "../compression/compression.h"
 
-
 #define MAXNUMERIC 32  // JWR  support up to 16 32 character long numeric formated strings
 #define MAXFNUM    16
 
@@ -83,7 +82,6 @@ void testDecompress(void *cdata,int clen)
   }
 }
 
-
 void main(int argc,const char **argv)
 {
 
@@ -128,7 +126,6 @@ void main(int argc,const char **argv)
       char *temp = new char[len];
       fread(temp, len, 1, fph );
 
-
 #if USE_CRYPTO
       int outlen2;
       void *cdata2 = testCompress(temp,len,COMPRESSION::CT_CRYPTO_GZIP,outlen2);
@@ -152,6 +149,9 @@ void main(int argc,const char **argv)
       int outlen8;
       void * cdata8 = testCompress(temp,len,COMPRESSION::CT_FASTLZ,outlen8);
 
+      int outlen9;
+      void * cdata9 = testCompress(temp,len,COMPRESSION::CT_MINIZ,outlen9);
+
       delete []temp;
 
       printf("\r\n");
@@ -169,7 +169,7 @@ void main(int argc,const char **argv)
       testDecompress(cdata6,outlen6);
       testDecompress(cdata7,outlen7);
       testDecompress(cdata8,outlen8);
-
+      testDecompress(cdata9,outlen9);
 
     }
     else
@@ -186,4 +186,3 @@ void main(int argc,const char **argv)
   printf("Press a key to exit.\r\n");
   getch();
 }
-

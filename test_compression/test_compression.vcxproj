@@ -19,7 +19,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <CharacterSet>Unicode</CharacterSet>
-    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <WholeProgramOptimization>false</WholeProgramOptimization>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
@@ -71,16 +71,16 @@
 /wd4530 /wd4244 /wd4996 %(AdditionalOptions)</AdditionalOptions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
-      <ExceptionHandling>
-      </ExceptionHandling>
+      <ExceptionHandling>false</ExceptionHandling>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <BufferSecurityCheck>false</BufferSecurityCheck>
       <AssemblerOutput>All</AssemblerOutput>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <CallingConvention>Cdecl</CallingConvention>
-      <Optimization>Full</Optimization>
+      <Optimization>MaxSpeed</Optimization>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <WholeProgramOptimization>false</WholeProgramOptimization>
     </ClCompile>
     <Link>
       <OutputFile>$(TargetPath)</OutputFile>
@@ -88,6 +88,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <TargetMachine>MachineX86</TargetMachine>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
     </Link>
     <CustomBuildStep>
       <Command>copy /b /y $(TargetPath) $(SolutionDir)$(TargetFileName)</Command>
@@ -95,6 +96,7 @@
     </CustomBuildStep>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\miniz\miniz.c" />
     <ClCompile Include="test_compression.cpp" />
     <ClCompile Include="..\liblzf\lzf_c.c" />
     <ClCompile Include="..\liblzf\lzf_d.c" />
@@ -382,6 +384,7 @@
     <ClInclude Include="..\minilzo\minilzo.h" />
     <ClInclude Include="..\bzip\bzlib.h" />
     <ClInclude Include="..\bzip\bzlib_private.h" />
+    <ClInclude Include="..\miniz\miniz.h" />
     <ClInclude Include="..\zlib\crc32.h" />
     <ClInclude Include="..\zlib\deflate.h" />
     <ClInclude Include="..\zlib\inffast.h" />
